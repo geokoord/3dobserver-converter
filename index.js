@@ -81,9 +81,9 @@ async function threedl2geojson(file) {
         let decimalPlaces = 4;
 
         let name = lineSplit[3];
-        let X = parseFloat((lineSplit[6] / 1000).toFixed(4));
-        let Y = parseFloat((lineSplit[7] / 1000).toFixed(4));
-        let Z = parseFloat((lineSplit[8] / 1000).toFixed(4));
+        let X = parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces));
+        let Y = parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces));
+        let Z = parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces));
 
         geoJsonObj.features.push({
           type: "Feature",
@@ -98,27 +98,39 @@ async function threedl2geojson(file) {
             Name: lineSplit[3],
             Memo: lineSplit[4],
             Memo2: lineSplit[5],
-            "Meas.x": parseFloat((lineSplit[6] / 1000).toFixed(4)),
-            "Meas.y": parseFloat((lineSplit[7] / 1000).toFixed(4)),
-            "Meas.z": parseFloat((lineSplit[8] / 1000).toFixed(4)),
-            "RealMeas.x": parseFloat((lineSplit[9] / 1000).toFixed(4)),
-            "RealMeas.y": parseFloat((lineSplit[10] / 1000).toFixed(4)),
-            "RealMeas.z": parseFloat((lineSplit[11] / 1000).toFixed(4)),
-            "Ref.x": parseFloat((lineSplit[12] / 1000).toFixed(4)),
-            "Ref.y": parseFloat((lineSplit[13] / 1000).toFixed(4)),
-            "Ref.z": parseFloat((lineSplit[14] / 1000).toFixed(4)),
-            "Offset.x": parseFloat((lineSplit[15] / 1000).toFixed(4)),
-            "Offset.y": parseFloat((lineSplit[16] / 1000).toFixed(4)),
-            "Offset.z": parseFloat((lineSplit[17] / 1000).toFixed(4)),
+            "Meas.x": parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces)),
+            "Meas.y": parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces)),
+            "Meas.z": parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces)),
+            "RealMeas.x": parseFloat(
+              (lineSplit[9] / 1000).toFixed(decimalPlaces)
+            ),
+            "RealMeas.y": parseFloat(
+              (lineSplit[10] / 1000).toFixed(decimalPlaces)
+            ),
+            "RealMeas.z": parseFloat(
+              (lineSplit[11] / 1000).toFixed(decimalPlaces)
+            ),
+            "Ref.x": parseFloat((lineSplit[12] / 1000).toFixed(decimalPlaces)),
+            "Ref.y": parseFloat((lineSplit[13] / 1000).toFixed(decimalPlaces)),
+            "Ref.z": parseFloat((lineSplit[14] / 1000).toFixed(decimalPlaces)),
+            "Offset.x": parseFloat(
+              (lineSplit[15] / 1000).toFixed(decimalPlaces)
+            ),
+            "Offset.y": parseFloat(
+              (lineSplit[16] / 1000).toFixed(decimalPlaces)
+            ),
+            "Offset.z": parseFloat(
+              (lineSplit[17] / 1000).toFixed(decimalPlaces)
+            ),
             X_Check: lineSplit[18],
             Y_Check: lineSplit[19],
             Z_Check: lineSplit[20],
-            "MTol.x": parseFloat((lineSplit[21] / 1000).toFixed(4)),
-            "MTol.y": parseFloat((lineSplit[22] / 1000).toFixed(4)),
-            "MTol.z": parseFloat((lineSplit[23] / 1000).toFixed(4)),
-            "PTol.x": parseFloat((lineSplit[24] / 1000).toFixed(4)),
-            "PTol.y": parseFloat((lineSplit[25] / 1000).toFixed(4)),
-            "PTol.z": parseFloat((lineSplit[26] / 1000).toFixed(4)),
+            "MTol.x": parseFloat((lineSplit[21] / 1000).toFixed(decimalPlaces)),
+            "MTol.y": parseFloat((lineSplit[22] / 1000).toFixed(decimalPlaces)),
+            "MTol.z": parseFloat((lineSplit[23] / 1000).toFixed(decimalPlaces)),
+            "PTol.x": parseFloat((lineSplit[24] / 1000).toFixed(decimalPlaces)),
+            "PTol.y": parseFloat((lineSplit[25] / 1000).toFixed(decimalPlaces)),
+            "PTol.z": parseFloat((lineSplit[26] / 1000).toFixed(decimalPlaces)),
             Visible: lineSplit[27],
             Marked: lineSplit[28],
             PointType: lineSplit[29],
