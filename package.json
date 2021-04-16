@@ -4,19 +4,20 @@
   "description": "Transformation of 3-Dim Observer files to geojson",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/geokoord/observer-file-transformer.git"
   },
   "author": "geopackix",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/geokoord/observer-file-transformer/issues"
   },
   "homepage": "https://github.com/geokoord/observer-file-transformer#readme",
   "dependencies": {
+    "figlet": "^1.5.0",
     "line-reader": "^0.4.0"
   }
 }
