@@ -7,7 +7,7 @@ const config = require("./package.json");
 const figlet = require("figlet");
 
 console.log(figlet.textSync("Geokoord"));
-console.log("\n3Dim-Observer to GeoJSON Converter | by Geokoord.com");
+console.log("\n3-Dim-Observer to GeoJSON Converter | by Geokoord.com");
 console.log(
   "Version: " +
     config.version +
@@ -49,12 +49,15 @@ async function readdir(dir) {
         let json = await threedl2geojson(file);
 
         //Write geojson file
-        await fsPromises.writeFile(p.name + outExt, JSON.stringify(json));
+        await fsPromises.writeFile(
+          p.name + "_out" + outExt,
+          JSON.stringify(json)
+        );
 
         console.log("Transform file " + file);
         console.log("Contains " + json.features.length + " Features");
         console.log("csr: " + "epsg:31467");
-        console.log("Write to file: " + p.name + outExt + "\n");
+        console.log("Write to file: " + p.name + "_out" + outExt + "\n");
       }
     }
     resolve(true);
