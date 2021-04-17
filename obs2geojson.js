@@ -6,6 +6,10 @@ const config = require("./package.json");
 
 const figlet = require("figlet");
 
+let home = __dirname;
+
+let inFile = process.argv[2] || null;
+
 console.log(figlet.textSync("Geokoord"));
 console.log("\n3-Dim-Observer to GeoJSON Converter | by Geokoord.com");
 console.log(
@@ -19,12 +23,39 @@ let outExt = ".geojson";
 console.log("OUT format: " + outExt);
 console.log("");
 
-let home = __dirname;
-
 (async () => {
   try {
-    await readdir(home);
-    console.log("msg - done.\n");
+    let files = [];
+
+    if (!inFile) {
+      //Search for files
+      files = await readdir(home);
+    } else {
+      //Single file is specified with process arguments
+      files.push(inFile);
+    }
+
+    //Iterate all files
+    for (file of files) {
+      let p_in = path.parse(path.join(home, file));
+
+      let targetFormat = await threedl2geojson(file);
+
+      console.log(process.argv);
+
+      let p_out_arg = process.argv[3];
+      let p_out = null;
+
+      if (p_out_arg) {
+        p_out = p_out_arg;
+      } else {
+        p_out = path.join(home, p_in.name) + outExt;
+      }
+
+      console.log(p_out);
+
+      await fsPromises.writeFile(p_out, targetFormat);
+    }
   } catch (e) {
     console.log(e);
   }
@@ -33,6 +64,8 @@ let home = __dirname;
 async function readdir(dir) {
   return new Promise(async (resolve, reject) => {
     let files = await fsPromises.readdir(dir);
+
+    let filesResult = [];
 
     for (let file of files) {
       //Create full path object
@@ -46,21 +79,10 @@ async function readdir(dir) {
 
       //Filter fir 3dl files
       if (fileExtension == ".3dl") {
-        let json = await threedl2geojson(file);
-
-        //Write geojson file
-        await fsPromises.writeFile(
-          p.name + "_out" + outExt,
-          JSON.stringify(json)
-        );
-
-        console.log("Transform file " + file);
-        console.log("Contains " + json.features.length + " Features");
-        console.log("csr: " + "epsg:31467");
-        console.log("Write to file: " + p.name + "_out" + outExt + "\n");
+        filesResult.push(file);
       }
     }
-    resolve(true);
+    resolve(filesResult);
   });
 }
 
@@ -147,7 +169,7 @@ async function threedl2geojson(file) {
       }
 
       if (last) {
-        resolve(geoJsonObj);
+        resolve(JSON.stringify(geoJsonObj));
       }
     });
   });

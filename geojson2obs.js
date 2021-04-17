@@ -6,6 +6,10 @@ const config = require("./package.json");
 
 const figlet = require("figlet");
 
+let home = __dirname;
+
+let inFile = process.argv[2] || null;
+
 console.log(figlet.textSync("Geokoord"));
 console.log("\nGeoJSON to 3-Dim-Observer to Converter | by Geokoord.com");
 console.log(
@@ -20,12 +24,39 @@ let outExt = ".3dl";
 console.log("OUT format: " + outExt);
 console.log("");
 
-let home = __dirname;
-
 (async () => {
   try {
-    await readdir(home);
-    console.log("msg - done.\n");
+    let files = [];
+
+    if (!inFile) {
+      //Search for files
+      files = await readdir(home);
+    } else {
+      //Single file is specified with process arguments
+      files.push(inFile);
+    }
+
+    //Iterate all files
+    for (file of files) {
+      let p_in = path.parse(path.join(home, file));
+
+      let targetFormat = await geojson2threedl(file);
+
+      console.log(process.argv);
+
+      let p_out_arg = process.argv[3];
+      let p_out = null;
+
+      if (p_out_arg) {
+        p_out = p_out_arg;
+      } else {
+        p_out = path.join(home, p_in.name) + outExt;
+      }
+
+      console.log(p_out);
+
+      await fsPromises.writeFile(p_out, targetFormat);
+    }
   } catch (e) {
     console.log(e);
   }
@@ -35,30 +66,18 @@ async function readdir(dir) {
   return new Promise(async (resolve, reject) => {
     let files = await fsPromises.readdir(dir);
 
+    let filesResult = [];
+
     for (let file of files) {
-      //Create full path object
-      let fullPath = path.join(dir, file);
-
-      //Createv parsed file object (e.g. for file.name)
-      let p = path.parse(fullPath);
-
       //Extract file extension
       let fileExtension = path.extname(file);
 
       //Filter fir 3dl files
       if (fileExtension == inExt) {
-        //let json = await threedl2geojson(file);
-        let result = await geojson2threedl(file);
-        //Write geojson file
-        await fsPromises.writeFile(p.name + "_out" + outExt, result);
-
-        console.log("Transform file " + file);
-        //console.log("Contains " + json.features.length + " Features");
-        console.log("csr: " + "epsg:31467");
-        console.log("Write to file: " + p.name + "_out" + outExt + "\n");
+        filesResult.push(file);
       }
     }
-    resolve(true);
+    resolve(filesResult);
   });
 }
 
