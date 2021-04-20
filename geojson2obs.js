@@ -124,17 +124,17 @@ async function geojson2threedl(file) {
         ",0," +
         featureName +
         ",,," +
-        featureX +
+        0 +
         "," +
-        featureY +
+        0 +
         "," +
-        featureZ +
+        0 +
         "," +
-        featureX +
+        0 +
         "," +
-        featureY +
+        0 +
         "," +
-        featureZ +
+        0 +
         "," +
         featureX +
         "," +
