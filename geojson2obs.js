@@ -112,8 +112,11 @@ async function geojson2threedl(file) {
     let i = 0;
     for (feature of geoJsonObj.features) {
       featureName = feature.properties.name;
-      featureX = feature.geometry.coordinates[0] * 1000; //
-      featureY = feature.geometry.coordinates[1] * 1000; //
+
+      featureX = (feature.geometry.coordinates[0] - 3523661) * 1000;
+      console.log(featureX);
+      featureY = (feature.geometry.coordinates[1] - 5413159) * 1000;
+      console.log(featureY);
       featureZ = feature.geometry.coordinates[2] * 1000 || 0;
 
       let pointType = "MeasPoint"; //was "MeasPoint"
@@ -124,23 +127,23 @@ async function geojson2threedl(file) {
         ",0," +
         featureName +
         ",,," +
-        0 +
+        "NaN" +
         "," +
-        0 +
+        "NaN" +
         "," +
-        0 +
+        "NaN" +
         "," +
-        0 +
+        "NaN" +
         "," +
-        0 +
+        "NaN" +
         "," +
-        0 +
+        "NaN" +
         "," +
-        featureX +
+        featureX.toFixed(4) +
         "," +
-        featureY +
+        featureY.toFixed(4) +
         "," +
-        featureZ +
+        featureZ.toFixed(4) +
         ",0.00000,0.00000,0.00000,Y,Y,Y,NaN,NaN,NaN,NaN,NaN,NaN,Y,N," +
         pointType +
         ",,\n";

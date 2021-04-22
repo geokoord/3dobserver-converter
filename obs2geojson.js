@@ -105,6 +105,9 @@ async function threedl2geojson(file) {
 
         let decimalPlaces = 4;
 
+        let ffX = 3523661;
+        let ffY = 5413159;
+
         let name = lineSplit[3];
         let X = parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces));
         let Y = parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces));
@@ -114,8 +117,8 @@ async function threedl2geojson(file) {
           type: "Feature",
           properties: {
             name: name,
-            X: X,
-            Y: Y,
+            X: X + ffX,
+            Y: Y + ffY,
             Z: Z,
             REM: lineSplit[0],
             ID: lineSplit[1],
@@ -123,20 +126,22 @@ async function threedl2geojson(file) {
             Name: lineSplit[3],
             Memo: lineSplit[4],
             Memo2: lineSplit[5],
-            "Meas.x": parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces)),
-            "Meas.y": parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces)),
+            "Meas.x":
+              parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces)) + ffX,
+            "Meas.y":
+              parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces)) + ffY,
             "Meas.z": parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces)),
-            "RealMeas.x": parseFloat(
-              (lineSplit[9] / 1000).toFixed(decimalPlaces)
-            ),
-            "RealMeas.y": parseFloat(
-              (lineSplit[10] / 1000).toFixed(decimalPlaces)
-            ),
+            "RealMeas.x":
+              parseFloat((lineSplit[9] / 1000).toFixed(decimalPlaces)) + ffX,
+            "RealMeas.y":
+              parseFloat((lineSplit[10] / 1000).toFixed(decimalPlaces)) + ffY,
             "RealMeas.z": parseFloat(
               (lineSplit[11] / 1000).toFixed(decimalPlaces)
             ),
-            "Ref.x": parseFloat((lineSplit[12] / 1000).toFixed(decimalPlaces)),
-            "Ref.y": parseFloat((lineSplit[13] / 1000).toFixed(decimalPlaces)),
+            "Ref.x":
+              parseFloat((lineSplit[12] / 1000).toFixed(decimalPlaces)) + ffX,
+            "Ref.y":
+              parseFloat((lineSplit[13] / 1000).toFixed(decimalPlaces)) + ffY,
             "Ref.z": parseFloat((lineSplit[14] / 1000).toFixed(decimalPlaces)),
             "Offset.x": parseFloat(
               (lineSplit[15] / 1000).toFixed(decimalPlaces)
@@ -163,7 +168,7 @@ async function threedl2geojson(file) {
           },
           geometry: {
             type: "Point",
-            coordinates: [X, Y, Z],
+            coordinates: [X + ffX, Y + ffY, Z],
           },
         });
       }
