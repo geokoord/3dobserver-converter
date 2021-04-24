@@ -23,10 +23,12 @@ const consoleMode = false;
     //UI Mode
 
     console.log("Found files:");
+    console.log("------------------------------------------------------");
 
     files = await readDir(__dirname, [".geojson", ".3dl"]);
     const indexedFiles = require("./modules/consoleIndexedFiles");
     indexedFiles(files);
+    console.log("------------------------------------------------------");
   }
 
   /**

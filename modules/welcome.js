@@ -6,10 +6,7 @@ module.exports = function () {
 
   result += figlet.textSync("Geokoord");
   result += "\n3Dim-Observer-Data Converter | by Geokoord.com\n";
-  result +=
-    "Version: " +
-    config.version +
-    "\n ------------------------------------------------------";
+  result += "Version: " + config.version + "\n";
 
   return result;
 };

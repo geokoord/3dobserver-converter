@@ -8,8 +8,16 @@ Transformation of 3-Dim Observer files to GeoJson format
  | |  _ / _ \/ _ \| |/ / _ \ / _ \| '__/ _` |
  | |_| |  __/ (_) |   < (_) | (_) | | | (_| |
   \____|\___|\___/|_|\_\___/ \___/|_|  \__,_|
-3Dim-Observer/GeoJSON Converter | by Geokoord.com
-Version: 0.0.2
+
+3Dim-Observer-Data Converter | by Geokoord.com
+Version: 0.0.3
+ ------------------------------------------------------
+Found files:
+(0) 110-1000.3dl
+(1) 110-1000.geojson
+(2) 110-1000_res.geojson
+Select a file (by number) :
+
 ```
 
 ## Install
@@ -20,24 +28,13 @@ run the following command to install dependencies
 npm install
 ```
 
-## 3Dim to GeoJson conversion
+## Run
 
-Converts all '.3dl' files into '\_out.geojson' files
-
-```
-node obs2geojson.js
-```
-
-Example:
-test.3dl --> test_out.geojson
-
-## GeoJson to 3Dim conversion
-
-Converts all '.geojson' files into '\_out.3dl' files
+Converts selected '.3dl' files into '\_res.geojson' files and '.geojson' files into '\_res.3dl' files.
 
 ```
-node geojson2obs.js
+node main.js
 ```
 
 Example:
-test.geojson --> test_out.3dl
+test.3dl --> test_res.geojson
