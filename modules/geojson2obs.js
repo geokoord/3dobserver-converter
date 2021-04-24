@@ -2,7 +2,7 @@ const fsPromises = require("fs/promises");
 const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
-const config = require("./package.json");
+const config = require("./../package.json");
 
 const figlet = require("figlet");
 

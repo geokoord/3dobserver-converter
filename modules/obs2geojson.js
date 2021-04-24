@@ -1,95 +1,23 @@
 const fsPromises = require("fs/promises");
-const fs = require("fs");
-const path = require("path");
 const lineReader = require("line-reader");
-const config = require("./package.json");
 
-const base = require("./basecsr.json");
-console.log(base);
+//const base = require("./basecsr.json");
 
-const figlet = require("figlet");
+module.exports = async function (inFile, outFile, base) {
+  /**
+   *  Convert File to .geojson
+   */
+  let targetFormat = await threedl2geojson(inFile, base);
+  console.log("File has been converted");
 
-let home = __dirname;
+  /**
+   * Write output file
+   */
+  await fsPromises.writeFile(outFile, targetFormat);
+  console.log("Result has been wrote to file: " + outFile);
+};
 
-let inFile = process.argv[2] || null;
-
-console.log(figlet.textSync("Geokoord"));
-console.log("\n3-Dim-Observer to GeoJSON Converter | by Geokoord.com");
-console.log(
-  "Version: " +
-    config.version +
-    "\n ------------------------------------------------------"
-);
-
-console.log("IN format: " + ".3dl");
-let outExt = ".geojson";
-console.log("OUT format: " + outExt);
-console.log("");
-
-(async () => {
-  try {
-    let files = [];
-
-    if (!inFile) {
-      //Search for files
-      files = await readdir(home);
-    } else {
-      //Single file is specified with process arguments
-      files.push(inFile);
-    }
-
-    //Iterate all files
-    for (file of files) {
-      let p_in = path.parse(path.join(home, file));
-
-      let targetFormat = await threedl2geojson(file);
-
-      console.log(process.argv);
-
-      let p_out_arg = process.argv[3];
-      let p_out = null;
-
-      if (p_out_arg) {
-        p_out = p_out_arg;
-      } else {
-        p_out = path.join(home, p_in.name) + outExt;
-      }
-
-      console.log(p_out);
-
-      await fsPromises.writeFile(p_out, targetFormat);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-})();
-
-async function readdir(dir) {
-  return new Promise(async (resolve, reject) => {
-    let files = await fsPromises.readdir(dir);
-
-    let filesResult = [];
-
-    for (let file of files) {
-      //Create full path object
-      let fullPath = path.join(dir, file);
-
-      //Createv parsed file object (e.g. for file.name)
-      let p = path.parse(fullPath);
-
-      //Extract file extension
-      let fileExtension = path.extname(file);
-
-      //Filter fir 3dl files
-      if (fileExtension == ".3dl") {
-        filesResult.push(file);
-      }
-    }
-    resolve(filesResult);
-  });
-}
-
-async function threedl2geojson(file) {
+async function threedl2geojson(file, base) {
   return new Promise((resolve, reject) => {
     let geoJsonObj = {
       type: "FeatureCollection",
@@ -106,17 +34,23 @@ async function threedl2geojson(file) {
       if (line.startsWith("MPT")) {
         let lineSplit = line.split(",");
 
-        console.log(lineSplit);
+        //console.log(lineSplit);
 
         let decimalPlaces = 4;
 
-        let ffX = base.baseX;
-        let ffY = base.baseY;
+        //console.log(base);
+
+        let ffX = parseFloat(base[0]);
+        let ffY = parseFloat(base[1]);
+        let ffZ = parseFloat(base[2]);
 
         let name = lineSplit[3];
         let X = parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces));
         let Y = parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces));
         let Z = parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces));
+
+        //console.log([lineSplit[6], lineSplit[7], lineSplit[8]]);
+        //console.log([X + ffX, Y + ffY, Z + ffZ]);
 
         geoJsonObj.features.push({
           type: "Feature",
@@ -124,7 +58,7 @@ async function threedl2geojson(file) {
             name: name,
             X: X + ffX,
             Y: Y + ffY,
-            Z: Z,
+            Z: Z + ffZ,
             REM: lineSplit[0],
             ID: lineSplit[1],
             SortOrder: lineSplit[2],
@@ -135,19 +69,20 @@ async function threedl2geojson(file) {
               parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces)) + ffX,
             "Meas.y":
               parseFloat((lineSplit[7] / 1000).toFixed(decimalPlaces)) + ffY,
-            "Meas.z": parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces)),
+            "Meas.z":
+              parseFloat((lineSplit[8] / 1000).toFixed(decimalPlaces)) + ffZ,
             "RealMeas.x":
               parseFloat((lineSplit[9] / 1000).toFixed(decimalPlaces)) + ffX,
             "RealMeas.y":
               parseFloat((lineSplit[10] / 1000).toFixed(decimalPlaces)) + ffY,
-            "RealMeas.z": parseFloat(
-              (lineSplit[11] / 1000).toFixed(decimalPlaces)
-            ),
+            "RealMeas.z":
+              parseFloat((lineSplit[11] / 1000).toFixed(decimalPlaces)) + ffZ,
             "Ref.x":
               parseFloat((lineSplit[12] / 1000).toFixed(decimalPlaces)) + ffX,
             "Ref.y":
               parseFloat((lineSplit[13] / 1000).toFixed(decimalPlaces)) + ffY,
-            "Ref.z": parseFloat((lineSplit[14] / 1000).toFixed(decimalPlaces)),
+            "Ref.z":
+              parseFloat((lineSplit[14] / 1000).toFixed(decimalPlaces)) + ffZ,
             "Offset.x": parseFloat(
               (lineSplit[15] / 1000).toFixed(decimalPlaces)
             ),
@@ -173,7 +108,7 @@ async function threedl2geojson(file) {
           },
           geometry: {
             type: "Point",
-            coordinates: [X + ffX, Y + ffY, Z],
+            coordinates: [X + ffX, Y + ffY, Z + ffZ],
           },
         });
       }
