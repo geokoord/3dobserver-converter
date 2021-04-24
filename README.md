@@ -10,16 +10,14 @@ Transformation of 3-Dim Observer files to GeoJson format
   \____|\___|\___/|_|\_\___/ \___/|_|  \__,_|
 
 3Dim-Observer-Data Converter | by Geokoord.com
-Version: 0.0.3
+Version: 0.0.4
 
 Found files:
 ------------------------------------------------------
 (0) 110-1000.3dl
 (1) 110-1000.geojson
-(2) 110-1000_res.geojson
 ------------------------------------------------------
 Select a file (by number) :
-
 ```
 
 ## Install

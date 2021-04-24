@@ -4,11 +4,11 @@ var colors = require("colors");
 
 //const base = require("./basecsr.json");
 
-module.exports = async function (inFile, outFile, base) {
+module.exports = async function (inFile, outFile, base, epsg) {
   /**
    *  Convert File to .geojson
    */
-  let targetFormat = await threedl2geojson(inFile, base);
+  let targetFormat = await threedl2geojson(inFile, base, epsg);
   //console.log("File has been converted");
 
   /**
@@ -19,6 +19,7 @@ module.exports = async function (inFile, outFile, base) {
 };
 
 async function threedl2geojson(file, base, epsg = "31467") {
+  console.log("EPSG:" + epsg);
   return new Promise((resolve, reject) => {
     let geoJsonObj = {
       type: "FeatureCollection",
