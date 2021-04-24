@@ -11,11 +11,13 @@ Transformation of 3-Dim Observer files to GeoJson format
 
 3Dim-Observer-Data Converter | by Geokoord.com
 Version: 0.0.3
- ------------------------------------------------------
+
 Found files:
+------------------------------------------------------
 (0) 110-1000.3dl
 (1) 110-1000.geojson
 (2) 110-1000_res.geojson
+------------------------------------------------------
 Select a file (by number) :
 
 ```

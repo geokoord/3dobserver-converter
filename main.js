@@ -3,6 +3,7 @@ const welcomeMessage = require("./modules/welcome");
 const readDir = require("./modules/readDirectory");
 const path = require("path");
 const threedl2geojson = require("./modules/obs2geojson");
+const geojson2threedl = require("./modules/geojson2obs");
 const base = require("./modules/base");
 var colors = require("colors");
 
@@ -55,7 +56,11 @@ const consoleMode = false;
   }
 
   if (fileExtension == ".geojson") {
-    //geojson2threedl();
+    await geojson2threedl(
+      FilePath,
+      path.join(F.dir, F.name + "_res" + ".3dl"),
+      base
+    );
   }
 })();
 

@@ -1,87 +1,22 @@
 const fsPromises = require("fs/promises");
-const fs = require("fs");
-const path = require("path");
 const moment = require("moment");
-const config = require("./../package.json");
+var colors = require("colors");
 
-const figlet = require("figlet");
+module.exports = async function (inFile, outFile, base) {
+  /**
+   *  Convert File to .3dl
+   */
+  let targetFormat = await geojson2threedl(inFile, base);
+  //console.log("File has been converted");
 
-let home = __dirname;
+  /**
+   * Write output file
+   */
+  await fsPromises.writeFile(outFile, targetFormat);
+  console.log("Result has been wrote to file: " + colors.yellow(outFile));
+};
 
-let inFile = process.argv[2] || null;
-
-console.log(figlet.textSync("Geokoord"));
-console.log("\nGeoJSON to 3-Dim-Observer to Converter | by Geokoord.com");
-console.log(
-  "Version: " +
-    config.version +
-    "\n ------------------------------------------------------"
-);
-
-let inExt = ".geojson";
-console.log("IN format: " + inExt);
-let outExt = ".3dl";
-console.log("OUT format: " + outExt);
-console.log("");
-
-(async () => {
-  try {
-    let files = [];
-
-    if (!inFile) {
-      //Search for files
-      files = await readdir(home);
-    } else {
-      //Single file is specified with process arguments
-      files.push(inFile);
-    }
-
-    //Iterate all files
-    for (file of files) {
-      let p_in = path.parse(path.join(home, file));
-
-      let targetFormat = await geojson2threedl(file);
-
-      console.log(process.argv);
-
-      let p_out_arg = process.argv[3];
-      let p_out = null;
-
-      if (p_out_arg) {
-        p_out = p_out_arg;
-      } else {
-        p_out = path.join(home, p_in.name) + outExt;
-      }
-
-      console.log(p_out);
-
-      await fsPromises.writeFile(p_out, targetFormat);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-})();
-
-async function readdir(dir) {
-  return new Promise(async (resolve, reject) => {
-    let files = await fsPromises.readdir(dir);
-
-    let filesResult = [];
-
-    for (let file of files) {
-      //Extract file extension
-      let fileExtension = path.extname(file);
-
-      //Filter fir 3dl files
-      if (fileExtension == inExt) {
-        filesResult.push(file);
-      }
-    }
-    resolve(filesResult);
-  });
-}
-
-async function geojson2threedl(file) {
+async function geojson2threedl(file, base) {
   return new Promise(async (resolve, reject) => {
     let geoJsonObj = JSON.parse(
       await fsPromises.readFile(file, { encoding: "utf8" })
@@ -113,20 +48,22 @@ async function geojson2threedl(file) {
 
     let firstFeature = geoJsonObj.features[0];
 
-    let base = writeBaseCSRFile(
+    await base.addBase(file, [
       firstFeature.geometry.coordinates[0],
       firstFeature.geometry.coordinates[1],
-      firstFeature.geometry.coordinates[2]
-    );
+      firstFeature.geometry.coordinates[2],
+    ]);
 
     for (feature of geoJsonObj.features) {
       featureName = feature.properties.name;
 
-      featureX = (feature.geometry.coordinates[0] - base.baseX) * 1000;
-      console.log(featureX);
-      featureY = (feature.geometry.coordinates[1] - base.baseY) * 1000;
-      console.log(featureY);
-      featureZ = (feature.geometry.coordinates[2] - base.baseZ) * 1000 || 0;
+      let crs = await base.getBase(file);
+
+      featureX = (feature.geometry.coordinates[0] - crs[0]) * 1000;
+      //console.log(featureX);
+      featureY = (feature.geometry.coordinates[1] - crs[1]) * 1000;
+      //console.log(featureY);
+      featureZ = (feature.geometry.coordinates[2] - crs[2]) * 1000 || 0;
 
       let pointType = "MeasPoint"; //was "MeasPoint"
 
@@ -157,24 +94,20 @@ async function geojson2threedl(file) {
         pointType +
         ",,\n";
 
-      console.log(P);
+      //console.log(P);
       result += P;
       i++;
       //console.log("Added feature");
     }
 
+    console.log("Processed " + i + " points.");
+
     result +=
-      'EOF,\n<Protocol LastChanged="13.06.2007 12:44:37" name="1" xmlns="Protocol" />';
+      'EOF,\n<Protocol LastChanged="' +
+      moment().toISOString() +
+      '" name="1" xmlns="Protocol" />';
     //console.log(geoJsonObj);
 
     resolve(result);
   });
-}
-
-function writeBaseCSRFile(baseX = 0, baseY = 0, baseZ = 0) {
-  let basecsr = { baseX: baseX, baseY: baseY, baseZ: baseZ };
-
-  fs.writeFileSync("basecsr.json", JSON.stringify(basecsr));
-
-  return basecsr;
 }

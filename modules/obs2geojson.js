@@ -1,5 +1,6 @@
 const fsPromises = require("fs/promises");
 const lineReader = require("line-reader");
+var colors = require("colors");
 
 //const base = require("./basecsr.json");
 
@@ -8,29 +9,31 @@ module.exports = async function (inFile, outFile, base) {
    *  Convert File to .geojson
    */
   let targetFormat = await threedl2geojson(inFile, base);
-  console.log("File has been converted");
+  //console.log("File has been converted");
 
   /**
    * Write output file
    */
   await fsPromises.writeFile(outFile, targetFormat);
-  console.log("Result has been wrote to file: " + outFile);
+  console.log("Result has been wrote to file: " + colors.yellow(outFile));
 };
 
-async function threedl2geojson(file, base) {
+async function threedl2geojson(file, base, epsg = "31467") {
   return new Promise((resolve, reject) => {
     let geoJsonObj = {
       type: "FeatureCollection",
-      name: "testgeojson",
+      name: file,
       crs: {
         type: "name",
-        properties: { name: "epsg:31467" },
+        properties: { name: "epsg:" + epsg },
       },
       features: [],
     };
 
+    let pointCounter = 0;
+
     //ReadFile
-    let r = lineReader.eachLine(file, function (line, last) {
+    lineReader.eachLine(file, function (line, last) {
       if (line.startsWith("MPT")) {
         let lineSplit = line.split(",");
 
@@ -111,9 +114,11 @@ async function threedl2geojson(file, base) {
             coordinates: [X + ffX, Y + ffY, Z + ffZ],
           },
         });
+        pointCounter++;
       }
 
       if (last) {
+        console.log("Processed " + pointCounter + " points.");
         resolve(JSON.stringify(geoJsonObj));
       }
     });
