@@ -110,18 +110,27 @@ async function geojson2threedl(file) {
       "\n";
 
     let i = 0;
+
+    let firstFeature = geoJsonObj.features[0];
+
+    let base = writeBaseCSRFile(
+      firstFeature.geometry.coordinates[0],
+      firstFeature.geometry.coordinates[1],
+      firstFeature.geometry.coordinates[2]
+    );
+
     for (feature of geoJsonObj.features) {
       featureName = feature.properties.name;
 
-      featureX = (feature.geometry.coordinates[0] - 3523661) * 1000;
+      featureX = (feature.geometry.coordinates[0] - base.baseX) * 1000;
       console.log(featureX);
-      featureY = (feature.geometry.coordinates[1] - 5413159) * 1000;
+      featureY = (feature.geometry.coordinates[1] - base.baseY) * 1000;
       console.log(featureY);
-      featureZ = feature.geometry.coordinates[2] * 1000 || 0;
+      featureZ = (feature.geometry.coordinates[2] - base.baseZ) * 1000 || 0;
 
       let pointType = "MeasPoint"; //was "MeasPoint"
 
-      result +=
+      let P =
         "MPT," +
         i +
         ",0," +
@@ -147,6 +156,9 @@ async function geojson2threedl(file) {
         ",0.00000,0.00000,0.00000,Y,Y,Y,NaN,NaN,NaN,NaN,NaN,NaN,Y,N," +
         pointType +
         ",,\n";
+
+      console.log(P);
+      result += P;
       i++;
       //console.log("Added feature");
     }
@@ -157,4 +169,12 @@ async function geojson2threedl(file) {
 
     resolve(result);
   });
+}
+
+function writeBaseCSRFile(baseX = 0, baseY = 0, baseZ = 0) {
+  let basecsr = { baseX: baseX, baseY: baseY, baseZ: baseZ };
+
+  fs.writeFileSync("basecsr.json", JSON.stringify(basecsr));
+
+  return basecsr;
 }

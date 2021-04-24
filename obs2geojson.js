@@ -4,6 +4,9 @@ const path = require("path");
 const lineReader = require("line-reader");
 const config = require("./package.json");
 
+const base = require("./basecsr.json");
+console.log(base);
+
 const figlet = require("figlet");
 
 let home = __dirname;
@@ -103,10 +106,12 @@ async function threedl2geojson(file) {
       if (line.startsWith("MPT")) {
         let lineSplit = line.split(",");
 
+        console.log(lineSplit);
+
         let decimalPlaces = 4;
 
-        let ffX = 3523661;
-        let ffY = 5413159;
+        let ffX = base.baseX;
+        let ffY = base.baseY;
 
         let name = lineSplit[3];
         let X = parseFloat((lineSplit[6] / 1000).toFixed(decimalPlaces));
